@@ -158,6 +158,10 @@ class Gnip:
 
         url_path = "/" + publisher_scope + "/publishers/" + publisher_name + "/filters/" + filter_name + "/rules.xml"
         return self.__parse_response(self.__do_http_post(url_path, rule.to_xml()))
+        
+    def add_rule(self, publisher_scope, publisher_name, filter_name, rule):
+        the_filter = self.add_rules_to_filter(publisher_scope, publisher_name, filter_name, rule)
+        return the_filter
 
     def add_rules_to_filter(self, publisher_scope, publisher_name, filter_name, rules):
         """Add rules to a Gnip filter.
@@ -183,6 +187,10 @@ class Gnip:
             rules_xml+=rule.to_xml()
         rules_xml+="</rules>"
         return self.__parse_response(self.__do_http_post(url_path, rules_xml))
+        
+    def add_batch_rules(self, publisher_scope, publisher_name, filter_name, rules):
+        the_filter = self.add_rules_to_filter(publisher_scope, publisher_name, filter_name, rules)
+        return the_filter
 
     def remove_rule_from_filter(self, publisher_scope, publisher_name, filter_name, rule):
         """Remove a rule from a Gnip filter.
@@ -204,6 +212,10 @@ class Gnip:
         url_path = "/" + publisher_scope + "/publishers/" + publisher_name + "/filters/" + filter_name + "/rules"
 
         return self.__parse_response(self.__do_http_delete(url_path, rule.to_delete_query_string()))
+
+    def delete_rule(self, publisher_scope, publisher_name, filter_name, rule):
+        the_filter = self.remove_rule_from_filter(publisher_scope, publisher_name, filter_name, rule)
+        return the_filter
 
     def rule_exists_in_filter(self, publisher_scope, publisher_name, filter_name, rule):
         """Check if a rule exists in a Gnip filter.
@@ -235,6 +247,10 @@ class Gnip:
 
         the_filter = filter.Filter()
         the_filter.from_xml( xml)
+        return the_filter
+        
+    def rule_exists(self, publisher_scope, publisher_name, filter_name, rule):
+        the_filter = self.rule_exists_in_filter(publisher_scope, publisher_name, filter_name, rule)
         return the_filter
         
     def get_filter(self, publisher_scope, publisher_name, name):
