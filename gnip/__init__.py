@@ -233,6 +233,27 @@ class Gnip:
         else:
             return None
 
+        the_filter = filter.Filter()
+        the_filter.from_xml( xml)
+        return the_filter
+        
+    def get_filter(self, publisher_scope, publisher_name, name):
+        """Get a Gnip filter.
+
+        @type publisher_scope string
+        @param publisher_scope The scope of the publisher (my, public or gnip)  
+        @type publisher_name string
+        @param publisher_name The publisher to create filter for
+        @type name string
+        @param name The name of the filter to find
+        @return string containing response from the server
+
+        Same as find_filter, added for API consistency
+
+        """
+        the_filter = self.find_filter(publisher_scope, publisher_name, name)
+        return the_filter
+
     def delete_filter(self, publisher_scope, publisher_name, name):
         """Delete a Gnip filter.
 
@@ -434,6 +455,34 @@ class Gnip:
         url_path = "/" + scope + "/publishers/" + name + ".xml"
         return self.__parse_response(self.__do_http_get(url_path),publisher.Publisher())
 
+    def get_publishers(self, scope):
+        """Get a Gnip publisher.
+
+        @type scope string
+        @param scope The scope of the publisher (my, public or gnip)
+        @return Array of Publisher objects based on response from the server
+
+        Gets a list of publishers from the Gnip server.
+
+        """
+
+        url_path = "/" + scope + "/publishers.xml"
+        response = self.__do_http_get(url_path)
+        
+        if (response[0].status == 200):
+            root = fromstring(response[1])
+            publisher_nodes = root.findall("publisher")
+            publishers = []
+            for node in publisher_nodes:
+                publisher_string = tostring(node)
+                a_publisher = publisher.Publisher()
+                a_publisher.from_xml(publisher_string)
+                publishers.append(a_publisher)
+            return Response(response[0].status, publishers)
+        else:
+            return Response(response[0].status, self.__parse_error(response[1]))
+        
+    
     def update_publisher(self, publisher):
         """Update a Gnip filter.
 

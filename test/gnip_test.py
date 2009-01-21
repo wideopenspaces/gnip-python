@@ -227,6 +227,13 @@ class GnipTestCase(unittest.TestCase):
         self.assertEqual(200, response.code)
         self.assertEqual(a_filter.name, response.result.name)
         
+    def testGetFilter(self):
+        a_filter = filter.Filter(name=self.filterName, rules=self.rules, full_data=self.filterFullData)
+        self.gnip.create_filter(self.testpublisherscope, self.testpublisher, a_filter)
+        response = self.gnip.get_filter(self.testpublisherscope, self.testpublisher, self.filterName)
+        self.assertEqual(200, response.code)
+        self.assertEqual(a_filter.name, response.result.name)
+        
     def testGetPublisher(self):
         response = self.gnip.get_publisher(self.testpublisherscope, self.testpublisher)
         self.assertEqual(200, response.code)
